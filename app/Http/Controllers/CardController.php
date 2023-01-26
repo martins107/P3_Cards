@@ -28,11 +28,10 @@ class CardController extends Controller
             $card->name = $datos->name;
             $card->description = $datos->description;
 
-            $card->collections()->attach($datos->collection_id);
-
             try{
                 $card->save();
-                return ResponseGenerator::generateResponse(200, $card, 'ok');
+                $card->collections()->attach($datos->collection_id);
+                return ResponseGenerator::generateResponse(200, $card, 'Your card was saved');
             }catch(\Exception $e){
                 return ResponseGenerator::generateResponse(400, '', 'Failed to save');
             }

@@ -28,13 +28,14 @@ Route::prefix('users')->group(function(){
     Route::post('/recoverPass',[UserController::class,'recoverPass']);
 });
 Route::prefix('cards')->group(function(){
-    Route::put('/registCards',[UserController::class,'registCards'])->middleware(['auth:sanctum', 'admin']);
-    Route::put('/addCardToCollection',[CardController::class,'addCardToCollection'])->middleware(['auth:sanctum', 'admin']);
+    Route::put('/registCards',[UserController::class,'registCards'])->middleware(['auth:sanctum', 'ability:admin']);
+    Route::put('/addCardToCollection',[CardController::class,'addCardToCollection'])->middleware(['auth:sanctum', 'ability:admin']);
+    Route::post('/buyCard',[SaleController::class,'buyCard']);
 });
 Route::prefix('collections')->group(function(){
-    Route::put('/registCollections',[CollectionController::class,'registCollections'])->middleware(['auth:sanctum', 'admin']);
+    Route::put('/registCollections',[CollectionController::class,'registCollections'])->middleware(['auth:sanctum', 'ability:admin']);
 });
 Route::prefix('sales')->group(function(){
-    Route::put('/sellCard',[SaleController::class,'sellCard']);
-    Route::post('/buyCard',[SaleController::class,'buyCard']);
+    Route::put('/searchCard',[SaleController::class,'searchCard'])->middleware(['auth:sanctum', 'ability:particular,professional']);  
+    Route::put('/sellCard',[SaleController::class,'sellCard'])->middleware(['auth:sanctum', 'ability:particular,professional']); 
 });

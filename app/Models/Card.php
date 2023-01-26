@@ -10,4 +10,8 @@ class Card extends Model
     public function collections(){
         return $this->belongsToMany(Collection::class);
     }
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
 }

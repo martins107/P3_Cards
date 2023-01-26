@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->integer('stock');
             $table->float('price', 7,2);
+            $table->foreignId('card_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

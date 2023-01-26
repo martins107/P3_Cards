@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Helpers\ResponseGenerator;
-use App\Models\User;
 use Illuminate\Validation\Rule;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -68,16 +68,15 @@ class UserController extends Controller
         if($validator->fails()){
             return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Something was wrong');
         }else{
-            $str=rand();
-            $newPassword = md5($str);
-
-            $hashPassword = Hash::make($newPassword);
-
             try{
                 $user = User::where('email', 'like', $datos->email)->firstOrFail();
             }catch(\Exception $e){
                 return ResponseGenerator::generateResponse(400, '', 'Invalid email');
             }
+
+            $str=rand();
+            $newPassword = md5($str);
+            $hashPassword = Hash::make($newPassword);
 
             $user->password = $hashPassword;
 

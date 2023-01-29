@@ -30,8 +30,7 @@ class UserController extends Controller
             $user->name = $datos->name;
             $user->email = $datos->email;
             $user->password = Hash::make($datos->password);
-            $user->rol = $datos->role;
-
+            $user->role = $datos->role;
             try{
                 $user->save();
                 return ResponseGenerator::generateResponse(200, $user, 'ok');

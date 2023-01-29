@@ -61,4 +61,38 @@ class CardController extends Controller
             }
         }
     }
+    public function buyCard(Request $request){
+        $json = $request->getContent();
+        $datos = json_decode($json);
+
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'max:20'],
+        ]);
+        if($validator->fails()){
+            return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Something was wrong');
+        }else{
+
+            $cards = Card::join('sales', 'cards.id', '=', 'sales.card_id')
+                        ->where('name', 'like', $datos->name)
+                        ->orderBy('sales.price', 'desc')
+                        ->get();
+            return ResponseGenerator::generateResponse(200, $cards, 'ok');
+            /*try{
+                $cards = Card::where('name', 'like', $datos->name)->get();
+                return ResponseGenerator::generateResponse(200, $card, 'These are the cards');
+            }catch(\Exception $e){
+                return ResponseGenerator::generateResponse(400, '', 'We didnt found cards');
+            }
+            foreach($cards as $card){
+                $cardToAdd = $card::join('sales', 'cards.id', '=', 'sales.card_id')
+                                    ->orderBy('sales.price', 'desc')
+                                    ->get();
+                if(!empty($cardToAdd)){
+                    array_push($cardsToBuy, $cardToAdd);
+                }
+            }
+            return ResponseGenerator::generateResponse(200, $cardsToBuy, 'ok');*/
+            
+        }
+    }
 }

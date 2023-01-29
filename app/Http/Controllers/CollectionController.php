@@ -17,8 +17,8 @@ class CollectionController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:20'],
             'image' => ['required', 'max:50'],
-            'edit_date' => ['required', 'date_fomat:Y-m-d'],
-            'cards' => ['required', 'array:card'],
+            'edit_date' => ['required', 'date_format:Y-m-d'],
+            'cards' => ['required'],
         ]);
         if($validator->fails()){
             return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Something was wrong');
@@ -31,24 +31,28 @@ class CollectionController extends Controller
 
             try{
                 $collection->save();
-                return ResponseGenerator::generateResponse(200, $collection, 'ok');
             }catch(\Exception $e){
                 return ResponseGenerator::generateResponse(400, '', 'Failed to save');
             }
+            //$cardsToDecode = $datos->cards->getContent();
+           // $cards = json_decode($datos->cards);
 
-            foreach($datos->cards as $card){
-                $validator = Validator::make($card->all(), [
-                    'name' => ['required', 'max:20'],
-                    'description' => ['required', 'max:100'],
-                    'card_id' => ['integer', 'max:20', 'exists:cards,id'],
-                ]);
-
-                if($validator->fails()){
-                    $collection->delete();
-                    return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Something was wrong');
-                }else{
-                    if($datos->card_id){
-                        $existingCard = Card::find($datos->card_id);
+            /*$validator = Validator::make($datos->cards, [
+                'name' => ['required', 'max:20'],
+                'description' => ['required', 'max:100'],
+                'card_id' => ['integer', 'max:20', 'exists:cards,id'],
+            ]);
+            if($validator->fails()){
+                $collection->delete();
+                return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Something was wrong');
+            }else{*/
+                foreach($datos->cards as $card){
+                    print_r($card->name);
+                    $cardDecode = json_decode(json_encode($card));
+                    print_r($card);
+                    die();
+                    if($card->id){
+                        $existingCard = Card::find($card->id);
 
                         try{
                             $collection->cards()->attach($existingCard);
@@ -58,8 +62,8 @@ class CollectionController extends Controller
                         }
                     }else{
                         $newCard = new Card();
-                        $newCard->name = $datos->name;
-                        $newCard->description = $datos->description;
+                        $newCard->name = $card->name;
+                        $newCard->description = $card->description;
 
                         try{
                             $newCard->save();    
@@ -69,9 +73,9 @@ class CollectionController extends Controller
                             return ResponseGenerator::generateResponse(400, '', 'Failed to save');
                         }
                     }
-                   
+                
                 }
-            }
+            //}
             return ResponseGenerator::generateResponse(200, $collection, 'Collection was saved');
         }
     }

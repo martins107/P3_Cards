@@ -3,6 +3,7 @@
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,10 +31,10 @@ Route::prefix('users')->group(function(){
 Route::prefix('cards')->group(function(){
     Route::put('/registCards',[UserController::class,'registCards'])->middleware(['auth:sanctum', 'ability:admin']);
     Route::put('/addCardToCollection',[CardController::class,'addCardToCollection'])->middleware(['auth:sanctum', 'ability:admin']);
-    Route::post('/buyCard',[SaleController::class,'buyCard']);
+    Route::post('/buyCard',[CardController::class,'buyCard']);
 });
 Route::prefix('collections')->group(function(){
-    Route::put('/registCollections',[CollectionController::class,'registCollections'])->middleware(['auth:sanctum', 'ability:admin']);
+    Route::put('/registCollections',[CollectionController::class,'registCollections'])/*->middleware(['auth:sanctum', 'ability:admin'])*/;
 });
 Route::prefix('sales')->group(function(){
     Route::put('/searchCard',[SaleController::class,'searchCard'])->middleware(['auth:sanctum', 'ability:particular,professional']);  

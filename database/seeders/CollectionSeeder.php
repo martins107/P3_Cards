@@ -17,12 +17,12 @@ class CollectionSeeder extends Seeder
     public function run()
     {
         DB::table('collections')->insert([
-            'name' => Str::random(10),
+            'name' => 'magos',
             'image' => Str::random(10),
             'edit_date' => '2022-05-15',
         ]);
         DB::table('collections')->insert([
-            'name' => Str::random(10),
+            'name' => 'cosas raras',
             'image' => Str::random(10),
             'edit_date' => '2023-01-01',
         ]);

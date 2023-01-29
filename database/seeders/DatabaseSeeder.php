@@ -20,8 +20,6 @@ class DatabaseSeeder extends Seeder
             SaleSeeder::class,
             CollectionSeeder::class,
             CardCollectionSeeder::class,
-            CardSaleSeeder::class,
-            SaleUserSeeder::class,
         ]);
     }
 }

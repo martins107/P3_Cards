@@ -33,10 +33,10 @@ Route::prefix('cards')->group(function(){
     Route::put('/addCardToCollection',[CardController::class,'addCardToCollection'])->middleware(['auth:sanctum', 'ability:admin']);
     Route::post('/buyCard',[CardController::class,'buyCard']);
 });
-Route::prefix('collections')->group(function(){
-    Route::put('/registCollections',[CollectionController::class,'registCollections'])/*->middleware(['auth:sanctum', 'ability:admin'])*/;
+Route::middleware(['auth:sanctum', 'ability:admin'])->prefix('collections')->group(function(){
+    Route::put('/registCollections',[CollectionController::class,'registCollections']);
 });
-Route::prefix('sales')->group(function(){
-    Route::put('/searchCard',[SaleController::class,'searchCard'])->middleware(['auth:sanctum', 'ability:particular,professional']);  
-    Route::put('/sellCard',[SaleController::class,'sellCard'])->middleware(['auth:sanctum', 'ability:particular,professional']); 
+Route::middleware(['auth:sanctum', 'ability:particular,professional'])->prefix('sales')->group(function(){
+    Route::put('/searchCard',[SaleController::class,'searchCard']);  
+    Route::put('/sellCard',[SaleController::class,'sellCard']);
 });

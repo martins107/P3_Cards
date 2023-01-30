@@ -34,49 +34,56 @@ class CollectionController extends Controller
             }catch(\Exception $e){
                 return ResponseGenerator::generateResponse(400, '', 'Failed to save');
             }
-            //$cardsToDecode = $datos->cards->getContent();
-           // $cards = json_decode($datos->cards);
+            foreach($request->all()['cards'] as $card){
 
-            /*$validator = Validator::make($datos->cards, [
-                'name' => ['required', 'max:20'],
-                'description' => ['required', 'max:100'],
-                'card_id' => ['integer', 'max:20', 'exists:cards,id'],
-            ]);
-            if($validator->fails()){
-                $collection->delete();
-                return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Something was wrong');
-            }else{*/
-                foreach($datos->cards as $card){
-                    print_r($card->name);
-                    $cardDecode = json_decode(json_encode($card));
-                    print_r($card);
-                    die();
-                    if($card->id){
-                        $existingCard = Card::find($card->id);
+                if(isset($card['card_id'])){
+                    $validator = Validator::make($card, [
+                        'card_id' => ['integer', 'max:20', 'exists:cards,id'],
+                    ]);
+                    if($validator->fails()){
+                        return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Format of this card is wrong: '.$card);
+                    }else{
+                        $existingCard = Card::find($card['card_id']);
 
                         try{
                             $collection->cards()->attach($existingCard);
                         }catch(\Exception $e){
-                            $collection->delete();
-                            return ResponseGenerator::generateResponse(400, '', 'Failed to save');
+                            return ResponseGenerator::generateResponse(400, $existingCard, 'Failed to save this card');
                         }
+                    }
+                }else{
+                    $validator = Validator::make($card, [
+                        'name' => ['required', 'max:20'],
+                        'description' => ['required', 'max:100'],
+                    ]);
+                    if($validator->fails()){
+                        //$collection->delete();
+                        return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Format of this card is wrong: '.$card);
                     }else{
                         $newCard = new Card();
-                        $newCard->name = $card->name;
-                        $newCard->description = $card->description;
+                        $newCard->name = $card['name'];
+                        $newCard->description = $card['description'];
 
                         try{
                             $newCard->save();    
                             $collection->cards()->attach($newCard);                        
                         }catch(\Exception $e){
-                            $collection->delete();
-                            return ResponseGenerator::generateResponse(400, '', 'Failed to save');
+                            //$collection->delete();
+                            return ResponseGenerator::generateResponse(400, '', 'Failed to save this card');
                         }
                     }
-                
                 }
+            }
+            /*$collectionCards = Card::join('sales', 'cards.id', '=', 'sales.card_id')
+                                    ->select('card.*')
+                                    ->get();
+            if(empty($collectionCards)){
+                $collection->delete();
+                return ResponseGenerator::generateResponse(200, '', 'Failed to save the collection');
+            }else{*/
+                return ResponseGenerator::generateResponse(200, $collection, 'Collection was saved');
             //}
-            return ResponseGenerator::generateResponse(200, $collection, 'Collection was saved');
+            
         }
     }
 }

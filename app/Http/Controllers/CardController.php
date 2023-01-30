@@ -73,26 +73,12 @@ class CardController extends Controller
         }else{
 
             $cards = Card::join('sales', 'cards.id', '=', 'sales.card_id')
-                        ->where('name', 'like', $datos->name)
+                        ->join('users', 'sales.user_id', '=', 'users.id')
+                        ->where('cards.name', 'like', '%'.$datos->name.'%')
                         ->orderBy('sales.price', 'desc')
+                        ->select('cards.name', 'sales.price', 'sales.stock', 'users.name as user')
                         ->get();
-            return ResponseGenerator::generateResponse(200, $cards, 'ok');
-            /*try{
-                $cards = Card::where('name', 'like', $datos->name)->get();
-                return ResponseGenerator::generateResponse(200, $card, 'These are the cards');
-            }catch(\Exception $e){
-                return ResponseGenerator::generateResponse(400, '', 'We didnt found cards');
-            }
-            foreach($cards as $card){
-                $cardToAdd = $card::join('sales', 'cards.id', '=', 'sales.card_id')
-                                    ->orderBy('sales.price', 'desc')
-                                    ->get();
-                if(!empty($cardToAdd)){
-                    array_push($cardsToBuy, $cardToAdd);
-                }
-            }
-            return ResponseGenerator::generateResponse(200, $cardsToBuy, 'ok');*/
-            
+            return ResponseGenerator::generateResponse(200, $cards, 'ok');            
         }
     }
 }

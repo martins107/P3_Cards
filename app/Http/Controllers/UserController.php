@@ -49,7 +49,7 @@ class UserController extends Controller
             return ResponseGenerator::generateResponse(400, '', 'Invalid email');
         }
         if (Hash::check($datos->password, $user->password)) {    
-            $token = $user->createToken($user->name, [$user->rol]);
+            $token = $user->createToken($user->name, [$user->role]);
             $fullUser = [$user, $token->plainTextToken];
             return ResponseGenerator::generateResponse(200, $fullUser, 'Login succesfully');
         }else{

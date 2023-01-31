@@ -22,7 +22,7 @@ class SaleController extends Controller
             return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Something was wrong');
         }else{
             try{
-                $card = Card::where('name', 'like', $datos->name)->get();
+                $card = Card::where('name', 'like', '%'.$datos->name.'%')->get();
                 return ResponseGenerator::generateResponse(200, $card, 'These are the cards');
             }catch(\Exception $e){
                 return ResponseGenerator::generateResponse(400, '', 'We didnt found cards');
@@ -35,7 +35,7 @@ class SaleController extends Controller
 
         $validator = Validator::make($request->all(), [
             'id' => ['required', 'max:20', 'integer', 'exists:cards,id'],
-            'stock' => ['required', 'max:20', 'integer'],
+            'stock' => ['required', 'max_digits:11', 'integer'],
             'price' => ['required', 'decimal:2'],
         ]);
         if($validator->fails()){
@@ -48,6 +48,12 @@ class SaleController extends Controller
             $sale->card_id = $datos->id;
             $sale->user_id = Auth::id();
 
+            try{
+                $sale->save();
+                return ResponseGenerator::generateResponse(200, $sale, 'ok');
+            }catch(\Exception $e){
+                return ResponseGenerator::generateResponse(400, '', 'Failed to save');
+            }
         }
     }
 }

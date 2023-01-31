@@ -18,7 +18,7 @@ class CardController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:20'],
             'description' => ['required', 'max:100'],
-            'collection_id' => ['required', 'max:20', 'exists:collection,id'],
+            'collection_id' => ['required', 'max:20', 'exists:collections,id'],
         ]);
         if($validator->fails()){
             return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Something was wrong');

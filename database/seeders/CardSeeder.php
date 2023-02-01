@@ -17,20 +17,22 @@ class CardSeeder extends Seeder
     public function run()
     {
         DB::table('cards')->insert([
-            'name' => 'mago',
-            'description' => 'es un mago',
-        ]);
-        DB::table('cards')->insert([
-            'name' => 'mago de fuego',
-            'description' => 'es un mago pero de fuego',
-        ]);
-        DB::table('cards')->insert([
-            'name' => 'duende',
-            'description' => 'es un duende',
-        ]);
-        DB::table('cards')->insert([
-            'name' => 'perro',
-            'description' => 'es un perro',
+            [
+                'name' => 'mago',
+                'description' => 'es un mago',
+            ],
+            [
+                'name' => 'mago de fuego',
+                'description' => 'es un mago pero de fuego',
+            ],
+            [
+                'name' => 'duende',
+                'description' => 'es un duende',
+            ],
+            [
+                'name' => 'perro',
+                'description' => 'es un perro',
+            ]
         ]);
     }
 }

@@ -21,7 +21,7 @@ class CollectionController extends Controller
             'cards' => ['required'],
         ]);
         if($validator->fails()){
-            return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Something was wrong');
+            return ResponseGenerator::generateResponse(400, print_r($validator->errors()->all(),true), 'Something was wrong');
         }else{
             $collection = new Collection();
 
@@ -36,12 +36,12 @@ class CollectionController extends Controller
             }
             foreach($request->all()['cards'] as $card){
 
-                if(isset($card['card_id'])){
-                    $validator = Validator::make($card, [
-                        'card_id' => ['integer', 'max:20', 'exists:cards,id'],
+                if(isset($card['card_id'])){            
+                    $validatorExistingCards = Validator::make($card, [
+                        'card_id' => ['integer', 'exists:cards,id'],
                     ]);
-                    if($validator->fails()){
-                        return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Format of this card is wrong: '.$card);
+                    if($validatorExistingCards->fails()){
+                        return ResponseGenerator::generateResponse(400, $validatorExistingCards->errors()->all(), 'Format of this card is wrong');
                     }else{
                         $existingCard = Card::find($card['card_id']);
 
@@ -52,13 +52,12 @@ class CollectionController extends Controller
                         }
                     }
                 }else{
-                    $validator = Validator::make($card, [
+                    $validatorNewCards = Validator::make($card, [
                         'name' => ['required', 'max:20'],
                         'description' => ['required', 'max:100'],
                     ]);
                     if($validator->fails()){
-                        //$collection->delete();
-                        return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Format of this card is wrong: '.$card);
+                        return ResponseGenerator::generateResponse(400, $validatorNewCards->errors()->all(), 'Format of this card is wrong');
                     }else{
                         $newCard = new Card();
                         $newCard->name = $card['name'];
@@ -68,21 +67,17 @@ class CollectionController extends Controller
                             $newCard->save();    
                             $collection->cards()->attach($newCard);                        
                         }catch(\Exception $e){
-                            //$collection->delete();
                             return ResponseGenerator::generateResponse(400, '', 'Failed to save this card');
                         }
                     }
                 }
             }
-            /*$collectionCards = Card::join('sales', 'cards.id', '=', 'sales.card_id')
-                                    ->select('card.*')
-                                    ->get();
-            if(empty($collectionCards)){
+            /*if(empty($collection->cards())){
                 $collection->delete();
-                return ResponseGenerator::generateResponse(200, '', 'Failed to save the collection');
-            }else{*/
+                return ResponseGenerator::generateResponse(200, '', 'Collection has not have cards. The collection was deleted');
+            }else{
                 return ResponseGenerator::generateResponse(200, $collection, 'Collection was saved');
-            //}
+            }*/
             
         }
     }

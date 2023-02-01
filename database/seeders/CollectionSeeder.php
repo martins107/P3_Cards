@@ -17,16 +17,16 @@ class CollectionSeeder extends Seeder
     public function run()
     {
         DB::table('collections')->insert([
-            'name' => 'magos',
-            'image' => Str::random(10),
-            'edit_date' => '2022-05-15',
+            [
+                'name' => 'magos',
+                'image' => Str::random(10),
+                'edit_date' => '2022-05-15',
+            ],
+            [
+                'name' => 'cosas raras',
+                'image' => Str::random(10),
+                'edit_date' => '2023-01-01',
+            ]
         ]);
-        DB::table('collections')->insert([
-            'name' => 'cosas raras',
-            'image' => Str::random(10),
-            'edit_date' => '2023-01-01',
-        ]);
-        
-        
     }
 }

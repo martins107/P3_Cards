@@ -8,6 +8,7 @@ use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class SaleController extends Controller
 {
@@ -15,19 +16,26 @@ class SaleController extends Controller
         $json = $request->getContent();
         $datos = json_decode($json);
 
+        Log::info('Recogemos los datos del request.', ['request' => $datos]);
+
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'max:20'],
         ]);
         if($validator->fails()){
+            Log::error('La validación de los datos de la request han fallado', ['fallos' => $validator->errors()->all()]);
             return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Something was wrong');
         }else{
-            try{
+            Log::info('La request ha sido validada.', ['request' => $datos]);
+            try{                
                 $card = Card::where('name', 'like', '%'.$datos->name.'%')->get();
+                Log::info('La petición ha ido bien y ha devuelto estos datos: ',['cartas' => $card]);
                 return ResponseGenerator::generateResponse(200, $card, 'These are the cards');
             }catch(\Exception $e){
-                return ResponseGenerator::generateResponse(400, '', 'We didnt found cards');
+                Log::error('La petición a la base de datos ha salido mal', ['fallo' => $e]);
+                return ResponseGenerator::generateResponse(400, '', 'Something was wrong');
             }
         }
+
     }
     public function sellCard(Request $request){
         $json = $request->getContent();

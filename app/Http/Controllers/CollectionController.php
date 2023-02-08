@@ -81,4 +81,37 @@ class CollectionController extends Controller
             
         }
     }
+    public function updateCollections(Request $request){
+        $json = $request->getContent();
+        $datos = json_decode($json);
+
+
+        $validator = Validator::make($request->all(), [
+            'id' => ['required', 'numeric', 'exists:collections,id'],
+            'name' => 'max:20',
+            'image' => 'max:50',
+            'edit_date' => 'date_format:Y-m-d',
+        ]);
+
+        if($validator->fails()){
+            return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Something was wrong');
+        }else{
+            $collection = Collection::find($datos->id);
+            if(isset($datos->name)){
+                $collection->name = $datos->name;
+            }
+            if(isset($datos->image)){
+                $collection->image = $datos->image;
+            }
+            if(isset($datos->edit_date)){
+                $collection->edit_date = $datos->edit_date;
+            }
+            try{
+                $collection->save();
+                return ResponseGenerator::generateResponse(200, $collection, 'Datos modificados correctamente.');
+            }catch(\Exception $e){
+                return ResponseGenerator::generateResponse(400, '', 'Algo salió mal.');
+            }
+        }
+    }
 }

@@ -31,10 +31,12 @@ Route::prefix('users')->group(function(){
 Route::prefix('cards')->group(function(){
     Route::put('/registCards',[CardController::class,'registCards'])->middleware(['auth:sanctum', 'ability:admin']);
     Route::put('/addCardToCollection',[CardController::class,'addCardToCollection'])->middleware(['auth:sanctum', 'ability:admin']);
+    Route::post('/updateCards',[CardController::class,'updateCards'])->middleware(['auth:sanctum', 'ability:admin']);
     Route::post('/buyCard',[CardController::class,'buyCard']);
 });
 Route::middleware(['auth:sanctum', 'ability:admin'])->prefix('collections')->group(function(){
     Route::put('/registCollections',[CollectionController::class,'registCollections']);
+    Route::post('/updateCollections',[CollectionController::class,'updateCollections']);
 });
 Route::middleware(['auth:sanctum', 'ability:particular,professional'])->prefix('sales')->group(function(){
     Route::post('/searchCard',[SaleController::class,'searchCard']);  

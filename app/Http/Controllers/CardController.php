@@ -82,4 +82,33 @@ class CardController extends Controller
             return ResponseGenerator::generateResponse(200, $cards, 'ok');            
         }
     }
+    public function updateCards(Request $request){
+        $json = $request->getContent();
+        $datos = json_decode($json);
+
+
+        $validator = Validator::make($request->all(), [
+            'id' => ['required', 'numeric', 'exists:cards,id'],
+            'name' => 'max:20',
+            'description' => 'max:100',
+        ]);
+
+        if($validator->fails()){
+            return ResponseGenerator::generateResponse(400, $validator->errors()->all(), 'Something was wrong');
+        }else{
+            $card = Card::find($datos->id);
+            if(isset($datos->name)){
+                $card->name = $datos->name;
+            }
+            if(isset($datos->description)){
+                $card->description = $datos->description;
+            }
+            try{
+                $card->save();
+                return ResponseGenerator::generateResponse(200, $card, 'Datos modificados correctamente.');
+            }catch(\Exception $e){
+                return ResponseGenerator::generateResponse(400, '', 'Algo salió mal.');
+            }
+        }
+    }
 }

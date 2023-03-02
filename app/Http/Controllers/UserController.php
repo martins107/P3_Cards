@@ -51,7 +51,7 @@ class UserController extends Controller
         if (Hash::check($datos->password, $user->password)) {    
             $token = $user->createToken($user->name, [$user->role]);
             $fullUser = [$user, $token->plainTextToken];
-            return ResponseGenerator::generateResponse(200, $fullUser, 'Login succesfully');
+            return ResponseGenerator::generateResponse(200, $token->plainTextToken, 'Login succesfully');
         }else{
             return ResponseGenerator::generateResponse(400, '', 'Invalid password');
         }        

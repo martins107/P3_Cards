@@ -25,11 +25,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('users')->group(function(){
     Route::put('/register',[UserController::class,'register']);
-    Route::post('/login',[UserController::class,'login']);
+    Route::post('/login',[UserController::class,'login'])->name('login');
     Route::post('/recoverPass',[UserController::class,'recoverPass']);
 });
 Route::prefix('cards')->group(function(){
-    Route::put('/registCards',[CardController::class,'registCards'])->middleware(['auth:sanctum', 'ability:admin']);
+    Route::post('/registCards',[CardController::class,'registCards']);//->middleware(['auth:sanctum', 'ability:admin']);
     Route::put('/addCardToCollection',[CardController::class,'addCardToCollection'])->middleware(['auth:sanctum', 'ability:admin']);
     Route::post('/updateCards',[CardController::class,'updateCards'])->middleware(['auth:sanctum', 'ability:admin']);
     Route::post('/buyCard',[CardController::class,'buyCard']);
